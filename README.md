@@ -1803,3 +1803,4 @@ you to cite the above paper in your related publications.
 - [1] http://www.nvidia.com/object/cuda_get.html
 - [2] http://www.nvidia.com/object/cuda_learn_products.html
 - [3] http://en.wikipedia.org/wiki/Row-major_order
+ 
