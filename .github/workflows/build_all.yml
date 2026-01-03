@@ -1,4 +1,4 @@
-name: Build+Upload MCXCL and Octave/MATLAB mex
+name: Build MCXCL Binary Only
 on:
   push:
     branches: [ master ]
@@ -6,36 +6,23 @@ on:
     branches: [ master ]
 
 jobs:
-  build_all:
-    name: Build All
-    strategy:
-      fail-fast: false # Prevents Windows failure from killing the Mac build
-      matrix:
-        os: [ubuntu-22.04, macos-14, windows-2022]
-    runs-on: ${{ matrix.os }}
+  build_macos:
+    name: Build for Apple Silicon
+    runs-on: macos-14
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
-      - name: Install dependencies (MacOS ARM64)
-        if: ${{ matrix.os == 'macos-14' }}
-        run: brew install libomp 
-
-      - name: Build MCXCL Binary
+      - name: Build Binary
         run: |
           cd src
-          if [[ "${{ matrix.os }}" == "macos-14" ]]; then
-            make CC=clang CXX=clang++ # Uses native Mac tools for stability
-          elif [[ "${{ matrix.os }}" == "ubuntu-22.04" ]]; then
-            make static
-          else
-            make CC=gcc CXX=g++ # Windows fallback
-          fi
-
+          make clean
+          make CC=clang CXX=clang++
+      
       - name: Upload Binary
         uses: actions/upload-artifact@v4
         with:
-          name: mcxcl-${{ matrix.os }}
-          path: bin/mcxcl*
+          name: mcxcl-macos-arm64
+          path: bin/mcxcl
